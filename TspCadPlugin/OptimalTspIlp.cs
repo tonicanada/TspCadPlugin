@@ -57,15 +57,7 @@ namespace TspCadPlugin
             }
  
 
-            // Defining cost function
-            Objective objective = solver.Objective();
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
-                {
-                    objective.SetCoefficient(x[i, j], distMatrix[i, j]);
-                }
-            }
+
 
 
             // Defining constraints
@@ -81,7 +73,7 @@ namespace TspCadPlugin
                         constraint_1.SetCoefficient(x[i, j], 1);
                         constraint_2.SetCoefficient(x[j, i], 1);
 
-                    }
+                    } 
                 }
             }
 
@@ -118,7 +110,8 @@ namespace TspCadPlugin
                         }
                     }
                 }
-            } else if (formulationType == "withoutTimeVariables")
+            }
+            else if (formulationType == "withoutTimeVariables")
             {
                 List<string> subsets = GeneratorSubsets(n);
 
@@ -135,6 +128,17 @@ namespace TspCadPlugin
                         }
                     }
 
+                }
+            }
+
+
+            // Defining cost function
+            Objective objective = solver.Objective();
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    objective.SetCoefficient(x[i, j], distMatrix[i, j]);
                 }
             }
 
@@ -155,8 +159,8 @@ namespace TspCadPlugin
 
             }
 
-            int[] tour = Utils.DfsTraversal(tspGraph, 0);
-            tour[n] = 0;
+            int[] tour = Hierholder.HierholderDirectedGraph(0, tspGraph).ToArray();
+            //tour[n] = 0;
 
             return tour;
 
