@@ -159,7 +159,7 @@ namespace TspCadPlugin
 
             }
 
-            int[] tour = Hierholder.HierholderDirectedGraph(0, tspGraph).ToArray();
+            int[] tour = Hierholzer.HierholderDirectedGraph(0, tspGraph).ToArray();
             //tour[n] = 0;
 
             return tour;

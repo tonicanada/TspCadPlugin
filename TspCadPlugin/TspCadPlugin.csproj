@@ -82,7 +82,7 @@
     <Compile Include="FormInterface.Designer.cs">
       <DependentUpon>FormInterface.cs</DependentUpon>
     </Compile>
-    <Compile Include="Hierholder.cs" />
+    <Compile Include="Hierholzer.cs" />
     <Compile Include="MinCostPerfectMatching.cs" />
     <Compile Include="OptimalTspDynProg.cs" />
     <Compile Include="MyCommands.cs" />

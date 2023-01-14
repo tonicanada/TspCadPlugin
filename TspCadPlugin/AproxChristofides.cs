@@ -65,7 +65,7 @@ namespace TspCadPlugin
 
 
             List<int> path = new List<int>();
-            path = Hierholder.HierholderUndirectedGraph(0, mst);
+            path = Hierholzer.HierholderUndirectedGraph(0, mst);
 
             // Remove duplicates from path
             path = Utils.RemoveVisitedVerticesFromPath(distMatrix.GetLength(0), path);

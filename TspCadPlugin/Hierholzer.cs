@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TspCadPlugin
 {
-    public class Hierholder
+    public class Hierholzer
     {
         //public static List<int> FindCycleFromNodeUsingDFS(int current, List<int> path, int[,] adjMatrix, int startNode)
         //{
