@@ -104,9 +104,9 @@ namespace TspCadPlugin
             }
 
         }
+        
 
-
-        public static void ComputeTspOrToolsMultipleVehicles(int vehicleNumber, ObjectId startNodeObjId)
+        public static void ComputeTspOrToolsMultipleVehicles(int vehicleNumber, TSP.Node startNode)
         {
             Document acDoc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
             Database acCurDb = acDoc.Database;
@@ -121,17 +121,24 @@ namespace TspCadPlugin
                 acBlkTblRec = tr.GetObject(acBlkTbl[BlockTableRecord.ModelSpace],
                                                 OpenMode.ForWrite) as BlockTableRecord;
 
+                
                 TSP.TSPData tspData = Utils.GetDistanceMatrix(tr);
                 Double[,] distMatrix = tspData.distMatrix;
                 List<Node> nodes = tspData.nodes;
 
-                int startNode =  nodes.FindIndex(node => node.id == startNodeObjId);
-
-                List<List<int>> routes = OrToolsTSP.Main(distMatrix, vehicleNumber, startNode);
-                
-                for (int i=0; i<routes.Count; i++)
+                // If Start Node is not selected means there is just one vehicle and vehicle routing is reduced to a TSP
+                if (startNode.label is null)
                 {
-                    Utils.PlotTour(routes[i].ToArray(), nodes, tr, acBlkTblRec, i);
+                    List<int> route = OrToolsTSP.Main(distMatrix, vehicleNumber, 0)[0];
+                    Utils.PlotTour(route.ToArray(), nodes, tr, acBlkTblRec);
+                } else
+                {
+                    int startNodeIdx = nodes.FindIndex(node => node.id == startNode.id);
+                    List<List<int>> routes = OrToolsTSP.Main(distMatrix, vehicleNumber, startNodeIdx);
+                    for (int i = 0; i < routes.Count; i++)
+                    {
+                        Utils.PlotTour(routes[i].ToArray(), nodes, tr, acBlkTblRec, i+1);
+                    }
                 }
 
                 tr.Commit();

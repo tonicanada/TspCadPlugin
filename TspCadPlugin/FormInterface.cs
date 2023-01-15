@@ -86,18 +86,21 @@ namespace TspCadPlugin
             
             int vehicleNumber = Utils.ParseTxtToInt(txtBoxVehicleNumber.Text);
 
-            if (vehicleNumber == -1)
+            if (vehicleNumber == -1 || vehicleNumber == 0)
             {
+                MessageBox.Show("Please an integer greater or equal to 1 as the number of vehicles.");
                 return;
             }
-            if (txtBoxStartNode.Text == "")
+            if (txtBoxStartNode.Text == "" && vehicleNumber != 1)
             {
                 MessageBox.Show("Please select a starting node.");
                 return;
-            }
+            } 
+            
 
-            TSP.ComputeTspOrToolsMultipleVehicles(vehicleNumber, startNode.id);
+            TSP.ComputeTspOrToolsMultipleVehicles(vehicleNumber, startNode);
             txtBoxStartNode.Text = "";
+            startNode.label = null;
         }
 
         private void btnMst_Click(object sender, EventArgs e)

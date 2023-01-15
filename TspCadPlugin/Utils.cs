@@ -577,9 +577,8 @@ namespace TspCadPlugin
             try
             {
                 return Convert.ToInt32(input);
-            } catch (FormatException h)
+            } catch
             {
-                MessageBox.Show("Please enter an integer value");
                 return -1;
             }
         }
