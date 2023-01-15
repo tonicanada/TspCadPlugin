@@ -39,14 +39,18 @@
             this.btnOptimalDP = new System.Windows.Forms.Button();
             this.btnOptimalILP1 = new System.Windows.Forms.Button();
             this.tabApprox = new System.Windows.Forms.TabPage();
+            this.btnMst = new System.Windows.Forms.Button();
             this.btnDoubleTree = new System.Windows.Forms.Button();
             this.btnChristofides = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnSelectStartNode = new System.Windows.Forms.Button();
+            this.txtBoxStartNode = new System.Windows.Forms.TextBox();
+            this.labelVehicleNumber = new System.Windows.Forms.Label();
+            this.txtBoxVehicleNumber = new System.Windows.Forms.TextBox();
             this.btnOrTools = new System.Windows.Forms.Button();
             this.ToolTipBtnOptimalDP = new System.Windows.Forms.ToolTip(this.components);
             this.ToolTipBtnOptimalILP1 = new System.Windows.Forms.ToolTip(this.components);
             this.ToolTipBtnOptimalILP2 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnMst = new System.Windows.Forms.Button();
             this.groupBox3.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabOptimal.SuspendLayout();
@@ -179,6 +183,16 @@
             this.tabApprox.Text = "Approx";
             this.tabApprox.UseVisualStyleBackColor = true;
             // 
+            // btnMst
+            // 
+            this.btnMst.Location = new System.Drawing.Point(39, 35);
+            this.btnMst.Name = "btnMst";
+            this.btnMst.Size = new System.Drawing.Size(131, 38);
+            this.btnMst.TabIndex = 4;
+            this.btnMst.Text = "Run MST";
+            this.btnMst.UseVisualStyleBackColor = true;
+            this.btnMst.Click += new System.EventHandler(this.btnMst_Click);
+            // 
             // btnDoubleTree
             // 
             this.btnDoubleTree.Location = new System.Drawing.Point(39, 123);
@@ -201,6 +215,10 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.btnSelectStartNode);
+            this.tabPage1.Controls.Add(this.txtBoxStartNode);
+            this.tabPage1.Controls.Add(this.labelVehicleNumber);
+            this.tabPage1.Controls.Add(this.txtBoxVehicleNumber);
             this.tabPage1.Controls.Add(this.btnOrTools);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -209,25 +227,52 @@
             this.tabPage1.Text = "OR-Tools";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // btnSelectStartNode
+            // 
+            this.btnSelectStartNode.Location = new System.Drawing.Point(33, 68);
+            this.btnSelectStartNode.Name = "btnSelectStartNode";
+            this.btnSelectStartNode.Size = new System.Drawing.Size(102, 20);
+            this.btnSelectStartNode.TabIndex = 8;
+            this.btnSelectStartNode.Text = "Start Node";
+            this.btnSelectStartNode.UseVisualStyleBackColor = true;
+            this.btnSelectStartNode.Click += new System.EventHandler(this.btnSelectStartNode_Click);
+            // 
+            // txtBoxStartNode
+            // 
+            this.txtBoxStartNode.Location = new System.Drawing.Point(141, 68);
+            this.txtBoxStartNode.Name = "txtBoxStartNode";
+            this.txtBoxStartNode.ReadOnly = true;
+            this.txtBoxStartNode.Size = new System.Drawing.Size(38, 20);
+            this.txtBoxStartNode.TabIndex = 6;
+            this.txtBoxStartNode.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // labelVehicleNumber
+            // 
+            this.labelVehicleNumber.AutoSize = true;
+            this.labelVehicleNumber.Location = new System.Drawing.Point(30, 45);
+            this.labelVehicleNumber.Name = "labelVehicleNumber";
+            this.labelVehicleNumber.Size = new System.Drawing.Size(101, 13);
+            this.labelVehicleNumber.TabIndex = 5;
+            this.labelVehicleNumber.Text = "Number Of Vehicles";
+            // 
+            // txtBoxVehicleNumber
+            // 
+            this.txtBoxVehicleNumber.Location = new System.Drawing.Point(142, 42);
+            this.txtBoxVehicleNumber.Name = "txtBoxVehicleNumber";
+            this.txtBoxVehicleNumber.Size = new System.Drawing.Size(37, 20);
+            this.txtBoxVehicleNumber.TabIndex = 4;
+            this.txtBoxVehicleNumber.Text = "1";
+            this.txtBoxVehicleNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
             // btnOrTools
             // 
-            this.btnOrTools.Location = new System.Drawing.Point(39, 85);
+            this.btnOrTools.Location = new System.Drawing.Point(33, 118);
             this.btnOrTools.Name = "btnOrTools";
-            this.btnOrTools.Size = new System.Drawing.Size(131, 38);
+            this.btnOrTools.Size = new System.Drawing.Size(146, 38);
             this.btnOrTools.TabIndex = 3;
-            this.btnOrTools.Text = "Run \n OR-Tools";
+            this.btnOrTools.Text = "Run \n Vehicle Routing";
             this.btnOrTools.UseVisualStyleBackColor = true;
             this.btnOrTools.Click += new System.EventHandler(this.btnOrTools_Click);
-            // 
-            // btnMst
-            // 
-            this.btnMst.Location = new System.Drawing.Point(39, 35);
-            this.btnMst.Name = "btnMst";
-            this.btnMst.Size = new System.Drawing.Size(131, 38);
-            this.btnMst.TabIndex = 4;
-            this.btnMst.Text = "Run MST";
-            this.btnMst.UseVisualStyleBackColor = true;
-            this.btnMst.Click += new System.EventHandler(this.btnMst_Click);
             // 
             // FormInterface
             // 
@@ -247,6 +292,7 @@
             this.tabOptimal.ResumeLayout(false);
             this.tabApprox.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -271,5 +317,9 @@
         private System.Windows.Forms.ToolTip ToolTipBtnOptimalDP;
         private System.Windows.Forms.ToolTip ToolTipBtnOptimalILP1;
         private System.Windows.Forms.Button btnMst;
+        private System.Windows.Forms.Button btnSelectStartNode;
+        private System.Windows.Forms.TextBox txtBoxStartNode;
+        private System.Windows.Forms.Label labelVehicleNumber;
+        private System.Windows.Forms.TextBox txtBoxVehicleNumber;
     }
 }

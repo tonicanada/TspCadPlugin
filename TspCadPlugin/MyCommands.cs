@@ -1,4 +1,5 @@
-﻿using Autodesk.AutoCAD.Runtime;
+﻿using System.Windows.Forms;
+using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
@@ -17,7 +18,7 @@ namespace TspCadPlugin
         public static void ShortestPathMatrixCommand()
         {
             FormInterface form = new FormInterface();
-            Application.ShowModelessDialog(form);
+            Autodesk.AutoCAD.ApplicationServices.Application.ShowModelessDialog(form);
         }
 
 
@@ -29,14 +30,23 @@ namespace TspCadPlugin
         /// </summary>
         /// <returns>ObjectID array.</returns>
         [CommandMethod("select_nodes")]
-        public static ObjectId[] SelectNodes()
+        public static ObjectId[] SelectNodes(string promptMsg = "Please select nodes where TSP will be performed")
         {
-            Document acDoc = Application.DocumentManager.MdiActiveDocument;
+            Document acDoc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
             Database acCurDb = acDoc.Database;
             ObjectId[] selectionObjectsIdArray;
-            selectionObjectsIdArray = selectCadObjects(acDoc, "Please select nodes where TSP will be performed");
+
+
+            TypedValue[] filterlist = new TypedValue[2];
+            filterlist[0] = new TypedValue(0, "INSERT");
+            filterlist[1] = new TypedValue(2, "node");
+            SelectionFilter filter = new SelectionFilter(filterlist);
+
+            selectionObjectsIdArray = selectCadObjects(acDoc, promptMsg, filter);
             return selectionObjectsIdArray;
         }
+
+
 
 
         /// <summary>
@@ -45,13 +55,20 @@ namespace TspCadPlugin
         /// <param name="acDoc">CAD Document.</param>
         /// <param name="selectionPromptMessage">Message that will be displayed to the user</param>
         /// <returns>ObjectID array.</returns>
-        public static ObjectId[] selectCadObjects(Document acDoc, string selectionPromptMessage)
+        public static ObjectId[] selectCadObjects(Document acDoc, string selectionPromptMessage, SelectionFilter selectionFilter = null)
         {
             PromptSelectionResult acSPrompt;
             PromptSelectionOptions PtSelOpts = new PromptSelectionOptions();
             PtSelOpts.MessageForAdding = $"\n{selectionPromptMessage}";
 
-            acSPrompt = acDoc.Editor.GetSelection(PtSelOpts);
+            if (selectionFilter == null)
+            {
+                acSPrompt = acDoc.Editor.GetSelection(PtSelOpts);
+            } else
+            {
+                acSPrompt = acDoc.Editor.GetSelection(PtSelOpts, selectionFilter);
+            }
+            
 
             SelectionSet acSSetBlocks;
 

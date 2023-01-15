@@ -42,49 +42,136 @@ namespace TspCadPlugin
             {"optimalIlpWithoutTimeVars", OptimalTspIlp.GetOptimalTspIlpWithoutTimeVars},
             {"approxChristofides", AproxChristofides.GetAproxTSPChristofides},
             {"approx2Tree",  AproxDoubleTree.GetAproxDoubleTree},
-            {"ORTools",  OrToolsTSP.Main}
-
         };
 
-
-        public static void ComputeTsp(Document acDoc, Database acCurDb, Transaction tr, BlockTable acBlkTbl, BlockTableRecord acBlkTblRec, String aglorithmType)
+        public static int[] ComputeTsp(string algorithmType)
         {
+            Document acDoc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
+            Database acCurDb = acDoc.Database;
 
-            TSP.TSPData tspData = Utils.GetDistanceMatrix(acDoc, acCurDb, tr, acBlkTbl, acBlkTblRec);
-            Double[,] distMatrix = tspData.distMatrix;
-            List<TSP.Node> nodes = tspData.nodes;
+            using (DocumentLock docLock = acDoc.LockDocument())
+            using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
+            {
+                BlockTable acBlkTbl;
+                acBlkTbl = tr.GetObject(acCurDb.BlockTableId,
+                                             OpenMode.ForWrite) as BlockTable;
+                BlockTableRecord acBlkTblRec;
+                acBlkTblRec = tr.GetObject(acBlkTbl[BlockTableRecord.ModelSpace],
+                                                OpenMode.ForWrite) as BlockTableRecord;
 
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            Func<Double[,], int[]> tspAlgFunction = tspAlgorithmDict[aglorithmType];
-            int[] tour =  tspAlgFunction(distMatrix);
-            Double tourLength = Utils.PlotTour(tour, nodes, tr, acBlkTblRec);
-            watch.Stop();
-            Application.ShowAlertDialog("Execution time: " + (Convert.ToDouble(watch.ElapsedMilliseconds) / 1000).ToString() + " seconds \n" +
-                "Tour Length: " + tourLength.ToString("0.##") + " units");
+                TSP.TSPData tspData = Utils.GetDistanceMatrix(tr);
+                Double[,] distMatrix = tspData.distMatrix;
+                List<TSP.Node> nodes = tspData.nodes;
+
+                var watch = System.Diagnostics.Stopwatch.StartNew();
+                Func<Double[,], int[]> tspAlgFunction = tspAlgorithmDict[algorithmType];
+                int[] tour = tspAlgFunction(distMatrix);
+                Double tourLength = Utils.PlotTour(tour, nodes, tr, acBlkTblRec);
+                watch.Stop();
+                Application.ShowAlertDialog("Execution time: " + (Convert.ToDouble(watch.ElapsedMilliseconds) / 1000).ToString() + " seconds \n" +
+                    "Tour Length: " + tourLength.ToString("0.##") + " units");
+
+                tr.Commit();
+
+                return tour;
+
+
+            }
         }
 
 
-        public static void ComputeTspOrToolsMultipleVehicles(Document acDoc, Database acCurDb, Transaction tr, BlockTable acBlkTbl, BlockTableRecord acBlkTblRec)
+        public static void ComputeMst()
         {
-            TSP.TSPData tspData = Utils.GetDistanceMatrix(acDoc, acCurDb, tr, acBlkTbl, acBlkTblRec);
-            Double[,] distMatrix = tspData.distMatrix;
-            List<TSP.Node> nodes = tspData.nodes;
+            Document acDoc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
+            Database acCurDb = acDoc.Database;
+
+            using (DocumentLock docLock = acDoc.LockDocument())
+            using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
+            {
+                BlockTable acBlkTbl;
+                acBlkTbl = tr.GetObject(acCurDb.BlockTableId,
+                                             OpenMode.ForWrite) as BlockTable;
+                BlockTableRecord acBlkTblRec;
+                acBlkTblRec = tr.GetObject(acBlkTbl[BlockTableRecord.ModelSpace],
+                                                OpenMode.ForWrite) as BlockTableRecord;
+
+                TSP.TSPData tspData = Utils.GetDistanceMatrix(tr);
+                Double[,] distMatrix = tspData.distMatrix;
+                List<Node> nodes = tspData.nodes;
+
+                int[,] mst = Utils.GetMSTfromDistMatrix(distMatrix);
+                Utils.PlotGraph(mst, nodes, tr, acBlkTblRec);
+            }
+
+        }
+
+
+        public static void ComputeTspOrToolsMultipleVehicles(int vehicleNumber, ObjectId startNodeObjId)
+        {
+            Document acDoc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
+            Database acCurDb = acDoc.Database;
+
+            using (DocumentLock docLock = acDoc.LockDocument())
+            using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
+            {
+                BlockTable acBlkTbl;
+                acBlkTbl = tr.GetObject(acCurDb.BlockTableId,
+                                             OpenMode.ForWrite) as BlockTable;
+                BlockTableRecord acBlkTblRec;
+                acBlkTblRec = tr.GetObject(acBlkTbl[BlockTableRecord.ModelSpace],
+                                                OpenMode.ForWrite) as BlockTableRecord;
+
+                TSP.TSPData tspData = Utils.GetDistanceMatrix(tr);
+                Double[,] distMatrix = tspData.distMatrix;
+                List<Node> nodes = tspData.nodes;
+
+                int startNode =  nodes.FindIndex(node => node.id == startNodeObjId);
+
+                List<List<int>> routes = OrToolsTSP.Main(distMatrix, vehicleNumber, startNode);
+                
+                for (int i=0; i<routes.Count; i++)
+                {
+                    Utils.PlotTour(routes[i].ToArray(), nodes, tr, acBlkTblRec, i);
+                }
+
+                tr.Commit();
+
+            }
+
         }
 
 
 
 
-        public static void ComputeMST(Document acDoc, Database acCurDb, Transaction tr, BlockTable acBlkTbl, BlockTableRecord acBlkTblRec, String aglorithmType)
-        {
-            TSP.TSPData tspData = Utils.GetDistanceMatrix(acDoc, acCurDb, tr, acBlkTbl, acBlkTblRec);
-            Double[,] distMatrix = tspData.distMatrix;
-            List<Node> nodes = tspData.nodes;
 
-            int[,] mst = Utils.GetMSTfromDistMatrix(distMatrix);
-            //int[,] mstChris = AproxChristofides.GetAproxTSPChristofides(distMatrix);
-            Utils.PlotGraph(mst, nodes, tr, acBlkTblRec);
+        //public static void ComputeTsp(Document acDoc, Database acCurDb, Transaction tr, BlockTable acBlkTbl, BlockTableRecord acBlkTblRec, String aglorithmType)
+        //{
 
-        }
+        //    TSP.TSPData tspData = Utils.GetDistanceMatrix(acDoc, acCurDb, tr, acBlkTbl, acBlkTblRec);
+        //    Double[,] distMatrix = tspData.distMatrix;
+        //    List<TSP.Node> nodes = tspData.nodes;
+
+        //    var watch = System.Diagnostics.Stopwatch.StartNew();
+        //    Func<Double[,], int[]> tspAlgFunction = tspAlgorithmDict[aglorithmType];
+        //    int[] tour =  tspAlgFunction(distMatrix);
+        //    Double tourLength = Utils.PlotTour(tour, nodes, tr, acBlkTblRec);
+        //    watch.Stop();
+        //    Application.ShowAlertDialog("Execution time: " + (Convert.ToDouble(watch.ElapsedMilliseconds) / 1000).ToString() + " seconds \n" +
+        //        "Tour Length: " + tourLength.ToString("0.##") + " units");
+        //}
+
+
+        //public static void ComputeTspOrToolsMultipleVehicles(Document acDoc, Database acCurDb, Transaction tr, BlockTable acBlkTbl, BlockTableRecord acBlkTblRec)
+        //{
+        //    TSP.TSPData tspData = Utils.GetDistanceMatrix(acDoc, acCurDb, tr, acBlkTbl, acBlkTblRec);
+        //    Double[,] distMatrix = tspData.distMatrix;
+        //    List<TSP.Node> nodes = tspData.nodes;
+        //}
+
+
+
+
+
 
 
 

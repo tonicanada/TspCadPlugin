@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,28 +18,8 @@ namespace TspCadPlugin
     public static class Utils
     {
 
-        public static void GenerateCadTransaction(Action<Document, Database, Transaction, BlockTable, BlockTableRecord, String> f, string algorithmType)
-        {
-            Document acDoc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
-            Database acCurDb = acDoc.Database;
 
-            using (DocumentLock docLock = acDoc.LockDocument())
-            using (Transaction tr = acCurDb.TransactionManager.StartTransaction())
-            {
-                BlockTable acBlkTbl;
-                acBlkTbl = tr.GetObject(acCurDb.BlockTableId,
-                                             OpenMode.ForWrite) as BlockTable;
-                BlockTableRecord acBlkTblRec;
-                acBlkTblRec = tr.GetObject(acBlkTbl[BlockTableRecord.ModelSpace],
-                                                OpenMode.ForWrite) as BlockTableRecord;
-
-                f(acDoc, acCurDb, tr, acBlkTbl, acBlkTblRec, algorithmType);
-                
-            }
-        }
-
-
-        public static Double PlotTour(int[] tour, List<TSP.Node> nodes, Transaction tr, BlockTableRecord acBlkTblRec)
+        public static Double PlotTour(int[] tour, List<TSP.Node> nodes, Transaction tr, BlockTableRecord acBlkTblRec, int colorIndex = 0)
         {
             Double tourLength = 0;
             for (int i = 0; i < tour.Length - 1; i++)
@@ -51,17 +32,18 @@ namespace TspCadPlugin
                 Line acLine = new Line(new Point3d(x_i, y_i, 0),
                                  new Point3d(x_j, y_j, 0));
                 acLine.SetDatabaseDefaults();
+                acLine.ColorIndex = colorIndex;
                 acBlkTblRec.AppendEntity(acLine);
                 tr.AddNewlyCreatedDBObject(acLine, true);
                 tourLength += acLine.Length;
             }
 
-            tr.Commit();
+            //tr.Commit();
             return tourLength;
         }
 
 
-        public static Double PlotGraph(int[,] adjMatrix, List<TSP.Node> nodes, Transaction tr, BlockTableRecord acBlkTblRec)
+        public static Double PlotGraph(int[,] adjMatrix, List<TSP.Node> nodes, Transaction tr, BlockTableRecord acBlkTblRec, int colorIndex = 0)
         {
             Double tourLength = 0;
             for (int i = 0; i < adjMatrix.GetLength(0); i++)
@@ -140,7 +122,45 @@ namespace TspCadPlugin
         }
 
 
-        public static TSP.TSPData GetDistanceMatrix(Document acDoc, Database acCurDb, Transaction tr, BlockTable acBlkTbl, BlockTableRecord acBlkTblRec)
+        
+        public static TSP.Node GetStartNode(Transaction tr)
+        {
+            ObjectId[] selectedObjectsIdArray = MyCommands.SelectNodes("Please select the starting node.");
+            if (selectedObjectsIdArray is null)
+            {
+                MessageBox.Show("Please select a starting node.");
+                throw new System.Exception("Null selection");
+            } else if (selectedObjectsIdArray.Length > 1)
+            {
+                MessageBox.Show("Please select just one starting node.");
+                throw new System.Exception("More than 1 element selected");
+            }
+            TSP.Node node = new TSP.Node();
+
+            if (selectedObjectsIdArray[0].ObjectClass.Name == "AcDbBlockReference")
+            {
+                BlockReference currentBlock = (BlockReference)tr.GetObject(selectedObjectsIdArray[0], OpenMode.ForRead);
+                if (currentBlock.Name == "node")
+                {
+                    
+                    node.id = currentBlock.ObjectId;
+                    node.x = currentBlock.Position.X;
+                    node.y = currentBlock.Position.Y;
+
+                    foreach (ObjectId att_id in currentBlock.AttributeCollection)
+                    {
+                        AttributeReference att = (AttributeReference)tr.GetObject(att_id, OpenMode.ForRead);
+                        node.label = att.TextString;
+                    }
+                    
+                }
+            }
+            return node;
+
+        }
+        
+        
+        public static TSP.TSPData GetDistanceMatrix(Transaction tr)
         {
 
             ObjectId[] selectedObjectsIdArray = MyCommands.SelectNodes();
@@ -545,10 +565,23 @@ namespace TspCadPlugin
             tr.Commit();
 
             //using InvokeMember to support .NET 3.5
-            Object acadObject = Application.AcadApplication;
+            Object acadObject = Autodesk.AutoCAD.ApplicationServices.Application.AcadApplication;
             acadObject.GetType().InvokeMember("ZoomExtents",
                         BindingFlags.InvokeMethod, null, acadObject, null);
 
+        }
+
+
+        public static int ParseTxtToInt(string input)
+        {
+            try
+            {
+                return Convert.ToInt32(input);
+            } catch (FormatException h)
+            {
+                MessageBox.Show("Please enter an integer value");
+                return -1;
+            }
         }
     }
 }
