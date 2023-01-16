@@ -21,6 +21,7 @@ namespace TspCadPlugin
         {
             InitializeComponent();
             comboBoxNumNodes.Text = "15";
+            comboBoxFirstSolutionStrategy.Text = "AUTOMATIC";
         }
 
 
@@ -97,8 +98,14 @@ namespace TspCadPlugin
                 return;
             } 
             
-
-            TSP.ComputeTspOrToolsMultipleVehicles(vehicleNumber, startNode);
+            try
+            {
+                TSP.ComputeTspOrToolsMultipleVehicles(vehicleNumber, startNode, comboBoxFirstSolutionStrategy.SelectedItem.ToString());
+            } catch
+            {
+                MessageBox.Show("No solution found");
+            }
+            
             txtBoxStartNode.Text = "";
             startNode.label = null;
         }
@@ -136,6 +143,37 @@ namespace TspCadPlugin
 
                 tr.Commit();
             }
+        }
+
+        private void comboBoxFirstSolutionStrategy_DropDown(object sender, EventArgs e)
+        {
+            Graphics g = (sender as ComboBox).CreateGraphics();
+            float highest = 0;
+            for (int i =0; i< (sender as ComboBox).Items.Count; i++)
+            {
+                SizeF textLength = g.MeasureString((sender as ComboBox).Items[i].ToString(), (sender as ComboBox).Font);
+                if (textLength.Width > highest)
+                {
+                    highest = textLength.Width;
+                }
+
+            }
+
+            if (highest > 0)
+            {
+                (sender as ComboBox).DropDownWidth = (int)highest;
+            }
+        }
+
+
+        private void comboBoxFirstSolutionStrategy_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ToolTip ToolTip1 = new ToolTip();
+            ToolTip1.SetToolTip(comboBoxFirstSolutionStrategy, comboBoxFirstSolutionStrategy.SelectedItem.ToString());
+            ToolTip1.AutoPopDelay = 5000;
+            ToolTip1.InitialDelay = 1000;
+            ToolTip1.ReshowDelay = 500;
+            ToolTip1.ShowAlways = true;
         }
     }
 }

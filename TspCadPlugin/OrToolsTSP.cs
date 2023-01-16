@@ -10,25 +10,24 @@ namespace TspCadPlugin
     public static class OrToolsTSP
     {
 
-        ///// <summary>
-        /////   Print the solution.
-        ///// </summary>
-        //public static int[] GetSolution(in RoutingModel routing, in RoutingIndexManager manager, in Assignment solution)
-        //{
-        //    int[] tour = new int[routing.Size()+1];
+        public static Dictionary<string, FirstSolutionStrategy.Types.Value> firstSolutionStrategy = new Dictionary<string, FirstSolutionStrategy.Types.Value>()
+        {
+            {"AUTOMATIC", FirstSolutionStrategy.Types.Value.Automatic},
+            {"PATH_CHEAPEST_ARC", FirstSolutionStrategy.Types.Value.PathCheapestArc},
+            {"PATH_MOST_CONSTRAINED_ARC", FirstSolutionStrategy.Types.Value.PathMostConstrainedArc},
+            {"EVALUATOR_STRATEGY", FirstSolutionStrategy.Types.Value.Savings},
+            {"SAVINGS", FirstSolutionStrategy.Types.Value.Savings},
+            {"SWEEP", FirstSolutionStrategy.Types.Value.Sweep},
+            {"CHRISTOFIDES", FirstSolutionStrategy.Types.Value.Christofides},
+            {"ALL_UNPERFORMED", FirstSolutionStrategy.Types.Value.AllUnperformed},
+            {"BEST_INSERTION", FirstSolutionStrategy.Types.Value.BestInsertion},
+            {"PARALLEL_CHEAPEST_INSERTION", FirstSolutionStrategy.Types.Value.ParallelCheapestInsertion},
+            {"LOCAL_CHEAPEST_INSERTION", FirstSolutionStrategy.Types.Value.LocalCheapestArc},
+            {"GLOBAL_CHEAPEST_ARC", FirstSolutionStrategy.Types.Value.GlobalCheapestArc},
+            {"LOCAL_CHEAPEST_ARC", FirstSolutionStrategy.Types.Value.LocalCheapestArc},
+            {"FIRST_UNBOUND_MIN_VALUE", FirstSolutionStrategy.Types.Value.FirstUnboundMinValue}
+        };
 
-        //    var index = routing.Start(0);
-        //    int i = 0;
-
-        //    while (routing.IsEnd(index) == false)
-        //    {
-        //        tour[i] = (manager.IndexToNode((int)index));
-        //        index = solution.Value(routing.NextVar(index));
-        //        i++;
-        //    }
-        //    tour[tour.Length - 1] = 0;
-        //    return tour;
-        //}
 
         public static List<List<int>> GetRoutes(in RoutingModel routing, in RoutingIndexManager manager, in Assignment solution)
         {
@@ -50,7 +49,7 @@ namespace TspCadPlugin
 
 
         
-        public static List<List<int>> Main(Double[,] distMatrix, int vehicleNumber = 3, int startNode = 0)
+        public static List<List<int>> Main(Double[,] distMatrix, string firstSolStrategy, int vehicleNumber = 3, int startNode = 0)
         {
             // Create Routing Index Manager
             RoutingIndexManager manager =
@@ -91,19 +90,22 @@ namespace TspCadPlugin
             RoutingSearchParameters searchParameters =
                 operations_research_constraint_solver.DefaultRoutingSearchParameters();
 
-            //searchParameters.FirstSolutionStrategy = FirstSolutionStrategy.Types.Value.Christofides;
 
-            searchParameters.FirstSolutionStrategy = FirstSolutionStrategy.Types.Value.PathCheapestArc;
-
-
+            searchParameters.FirstSolutionStrategy = firstSolutionStrategy[firstSolStrategy];
 
 
             // Solve the problem.
             Assignment solution = routing.SolveWithParameters(searchParameters);
 
-            List<List<int>> routes = GetRoutes(routing, manager, solution);
-
-            return routes;
+            if (solution != null)
+            {
+                List<List<int>> routes = GetRoutes(routing, manager, solution);
+                return routes;
+            } else
+            {
+                throw new Exception("No solution found");
+            }
+            
 
         }
     }

@@ -20,6 +20,8 @@
             base.Dispose(disposing);
         }
 
+        
+
         #region Windows Form Designer generated code
 
         /// <summary>
@@ -43,6 +45,8 @@
             this.btnDoubleTree = new System.Windows.Forms.Button();
             this.btnChristofides = new System.Windows.Forms.Button();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.comboBoxFirstSolutionStrategy = new System.Windows.Forms.ComboBox();
+            this.labelFirstSolutionStrategy = new System.Windows.Forms.Label();
             this.btnSelectStartNode = new System.Windows.Forms.Button();
             this.txtBoxStartNode = new System.Windows.Forms.TextBox();
             this.labelVehicleNumber = new System.Windows.Forms.Label();
@@ -215,6 +219,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.comboBoxFirstSolutionStrategy);
+            this.tabPage1.Controls.Add(this.labelFirstSolutionStrategy);
             this.tabPage1.Controls.Add(this.btnSelectStartNode);
             this.tabPage1.Controls.Add(this.txtBoxStartNode);
             this.tabPage1.Controls.Add(this.labelVehicleNumber);
@@ -227,11 +233,46 @@
             this.tabPage1.Text = "OR-Tools";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // comboBoxFirstSolutionStrategy
+            // 
+            this.comboBoxFirstSolutionStrategy.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxFirstSolutionStrategy.FormattingEnabled = true;
+            this.comboBoxFirstSolutionStrategy.Items.AddRange(new object[] {
+            "AUTOMATIC",
+            "PATH_CHEAPEST_ARC",
+            "PATH_MOST_CONSTRAINED_ARC",
+            "EVALUATOR_STRATEGY",
+            "SAVINGS",
+            "SWEEP",
+            "CHRISTOFIDES",
+            "ALL_UNPERFORMED",
+            "BEST_INSERTION",
+            "PARALLEL_CHEAPEST_INSERTION",
+            "LOCAL_CHEAPEST_INSERTION",
+            "GLOBAL_CHEAPEST_ARC",
+            "LOCAL_CHEAPEST_ARC",
+            "FIRST_UNBOUND_MIN_VALUE"});
+            this.comboBoxFirstSolutionStrategy.Location = new System.Drawing.Point(33, 96);
+            this.comboBoxFirstSolutionStrategy.Name = "comboBoxFirstSolutionStrategy";
+            this.comboBoxFirstSolutionStrategy.Size = new System.Drawing.Size(146, 21);
+            this.comboBoxFirstSolutionStrategy.TabIndex = 9;
+            this.comboBoxFirstSolutionStrategy.SelectedIndexChanged += new System.EventHandler(this.comboBoxFirstSolutionStrategy_SelectedIndexChanged);
+            this.comboBoxFirstSolutionStrategy.DropDown += new System.EventHandler(this.comboBoxFirstSolutionStrategy_DropDown);
+            // 
+            // labelFirstSolutionStrategy
+            // 
+            this.labelFirstSolutionStrategy.AutoSize = true;
+            this.labelFirstSolutionStrategy.Location = new System.Drawing.Point(30, 80);
+            this.labelFirstSolutionStrategy.Name = "labelFirstSolutionStrategy";
+            this.labelFirstSolutionStrategy.Size = new System.Drawing.Size(109, 13);
+            this.labelFirstSolutionStrategy.TabIndex = 10;
+            this.labelFirstSolutionStrategy.Text = "First Solution Strategy";
+            // 
             // btnSelectStartNode
             // 
-            this.btnSelectStartNode.Location = new System.Drawing.Point(33, 68);
+            this.btnSelectStartNode.Location = new System.Drawing.Point(33, 45);
             this.btnSelectStartNode.Name = "btnSelectStartNode";
-            this.btnSelectStartNode.Size = new System.Drawing.Size(102, 20);
+            this.btnSelectStartNode.Size = new System.Drawing.Size(100, 20);
             this.btnSelectStartNode.TabIndex = 8;
             this.btnSelectStartNode.Text = "Start Node";
             this.btnSelectStartNode.UseVisualStyleBackColor = true;
@@ -239,17 +280,17 @@
             // 
             // txtBoxStartNode
             // 
-            this.txtBoxStartNode.Location = new System.Drawing.Point(141, 68);
+            this.txtBoxStartNode.Location = new System.Drawing.Point(142, 45);
             this.txtBoxStartNode.Name = "txtBoxStartNode";
             this.txtBoxStartNode.ReadOnly = true;
-            this.txtBoxStartNode.Size = new System.Drawing.Size(38, 20);
+            this.txtBoxStartNode.Size = new System.Drawing.Size(37, 20);
             this.txtBoxStartNode.TabIndex = 6;
             this.txtBoxStartNode.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // labelVehicleNumber
             // 
             this.labelVehicleNumber.AutoSize = true;
-            this.labelVehicleNumber.Location = new System.Drawing.Point(30, 45);
+            this.labelVehicleNumber.Location = new System.Drawing.Point(30, 22);
             this.labelVehicleNumber.Name = "labelVehicleNumber";
             this.labelVehicleNumber.Size = new System.Drawing.Size(101, 13);
             this.labelVehicleNumber.TabIndex = 5;
@@ -257,7 +298,7 @@
             // 
             // txtBoxVehicleNumber
             // 
-            this.txtBoxVehicleNumber.Location = new System.Drawing.Point(142, 42);
+            this.txtBoxVehicleNumber.Location = new System.Drawing.Point(142, 19);
             this.txtBoxVehicleNumber.Name = "txtBoxVehicleNumber";
             this.txtBoxVehicleNumber.Size = new System.Drawing.Size(37, 20);
             this.txtBoxVehicleNumber.TabIndex = 4;
@@ -266,7 +307,7 @@
             // 
             // btnOrTools
             // 
-            this.btnOrTools.Location = new System.Drawing.Point(33, 118);
+            this.btnOrTools.Location = new System.Drawing.Point(33, 137);
             this.btnOrTools.Name = "btnOrTools";
             this.btnOrTools.Size = new System.Drawing.Size(146, 38);
             this.btnOrTools.TabIndex = 3;
@@ -298,7 +339,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Button btnInsertSampleNodes;
         private System.Windows.Forms.Label labelNumNodes;
@@ -321,5 +361,7 @@
         private System.Windows.Forms.TextBox txtBoxStartNode;
         private System.Windows.Forms.Label labelVehicleNumber;
         private System.Windows.Forms.TextBox txtBoxVehicleNumber;
+        private System.Windows.Forms.ComboBox comboBoxFirstSolutionStrategy;
+        private System.Windows.Forms.Label labelFirstSolutionStrategy;
     }
 }

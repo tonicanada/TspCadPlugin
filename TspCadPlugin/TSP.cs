@@ -106,7 +106,7 @@ namespace TspCadPlugin
         }
         
 
-        public static void ComputeTspOrToolsMultipleVehicles(int vehicleNumber, TSP.Node startNode)
+        public static void ComputeTspOrToolsMultipleVehicles(int vehicleNumber, TSP.Node startNode, string firstSolutionStrategy)
         {
             Document acDoc = Autodesk.AutoCAD.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
             Database acCurDb = acDoc.Database;
@@ -129,12 +129,12 @@ namespace TspCadPlugin
                 // If Start Node is not selected means there is just one vehicle and vehicle routing is reduced to a TSP
                 if (startNode.label is null)
                 {
-                    List<int> route = OrToolsTSP.Main(distMatrix, vehicleNumber, 0)[0];
+                    List<int> route = OrToolsTSP.Main(distMatrix, firstSolutionStrategy, vehicleNumber, 0)[0];
                     Utils.PlotTour(route.ToArray(), nodes, tr, acBlkTblRec);
                 } else
                 {
                     int startNodeIdx = nodes.FindIndex(node => node.id == startNode.id);
-                    List<List<int>> routes = OrToolsTSP.Main(distMatrix, vehicleNumber, startNodeIdx);
+                    List<List<int>> routes = OrToolsTSP.Main(distMatrix, firstSolutionStrategy, vehicleNumber, startNodeIdx);
                     for (int i = 0; i < routes.Count; i++)
                     {
                         Utils.PlotTour(routes[i].ToArray(), nodes, tr, acBlkTblRec, i+1);
@@ -146,45 +146,6 @@ namespace TspCadPlugin
             }
 
         }
-
-
-
-
-
-        //public static void ComputeTsp(Document acDoc, Database acCurDb, Transaction tr, BlockTable acBlkTbl, BlockTableRecord acBlkTblRec, String aglorithmType)
-        //{
-
-        //    TSP.TSPData tspData = Utils.GetDistanceMatrix(acDoc, acCurDb, tr, acBlkTbl, acBlkTblRec);
-        //    Double[,] distMatrix = tspData.distMatrix;
-        //    List<TSP.Node> nodes = tspData.nodes;
-
-        //    var watch = System.Diagnostics.Stopwatch.StartNew();
-        //    Func<Double[,], int[]> tspAlgFunction = tspAlgorithmDict[aglorithmType];
-        //    int[] tour =  tspAlgFunction(distMatrix);
-        //    Double tourLength = Utils.PlotTour(tour, nodes, tr, acBlkTblRec);
-        //    watch.Stop();
-        //    Application.ShowAlertDialog("Execution time: " + (Convert.ToDouble(watch.ElapsedMilliseconds) / 1000).ToString() + " seconds \n" +
-        //        "Tour Length: " + tourLength.ToString("0.##") + " units");
-        //}
-
-
-        //public static void ComputeTspOrToolsMultipleVehicles(Document acDoc, Database acCurDb, Transaction tr, BlockTable acBlkTbl, BlockTableRecord acBlkTblRec)
-        //{
-        //    TSP.TSPData tspData = Utils.GetDistanceMatrix(acDoc, acCurDb, tr, acBlkTbl, acBlkTblRec);
-        //    Double[,] distMatrix = tspData.distMatrix;
-        //    List<TSP.Node> nodes = tspData.nodes;
-        //}
-
-
-
-
-
-
-
-
-
-
-
 
     }
 }
