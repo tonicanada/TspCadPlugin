@@ -129,8 +129,12 @@ namespace TspCadPlugin
                 // If Start Node is not selected means there is just one vehicle and vehicle routing is reduced to a TSP
                 if (startNode.label is null)
                 {
+                    var watch = System.Diagnostics.Stopwatch.StartNew();
                     List<int> route = OrToolsTSP.Main(distMatrix, firstSolutionStrategy, vehicleNumber, 0)[0];
-                    Utils.PlotTour(route.ToArray(), nodes, tr, acBlkTblRec);
+                    Double tourLength = Utils.PlotTour(route.ToArray(), nodes, tr, acBlkTblRec);
+                    watch.Stop();
+                    Application.ShowAlertDialog("Execution time: " + (Convert.ToDouble(watch.ElapsedMilliseconds) / 1000).ToString() + " seconds \n" +
+                   "Tour Length: " + tourLength.ToString("0.##") + " units");
                 } else
                 {
                     int startNodeIdx = nodes.FindIndex(node => node.id == startNode.id);
