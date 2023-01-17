@@ -5,7 +5,11 @@ namespace TspCadPlugin
 {
     public static class OptimalTspDynProg
     {
-
+        /// <summary>
+        /// Function that computes the optimal TSP solution using Dynamic Programming.
+        /// </summary>
+        /// <param name="distMatrix">Distance Matrix</param>
+        /// <returns>Optimal TSP tour</returns>
         public static int[] GetOptimalTSP(Double[,] distMatrix)
         {
             int n = distMatrix.GetLength(0);
@@ -29,9 +33,10 @@ namespace TspCadPlugin
 
 
         /// <summary>
-        /// Function that fills the memo table with the distance from the starting node to every other node.
-        /// For example, if there are 4 nodes, and the 0 is the starting one, this function will fill the values in
-        /// memo table for the following subsets {10, 100, 1000}
+        /// Function that starts filling a blank memo table with the distance 
+        /// from the starting node to every other node.
+        /// For example, if there are 4 nodes, and the 0 is the starting one, this 
+        /// function will fill the values in memo table for the following subsets {10, 100, 1000}
         /// </summary>
         /// <param name="distMatrix">Distance Matrix</param>
         /// <param name="memo">Memo table (n rows, 2^n columns)</param>
@@ -175,9 +180,6 @@ namespace TspCadPlugin
             return tour;
         }
 
-
-
-        // Returns all sets of size n with r bits set to 1. Example: combinations(3,4) = [0111, 1011, 1101, 1110]
 
 
 

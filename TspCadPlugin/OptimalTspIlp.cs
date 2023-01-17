@@ -57,9 +57,6 @@ namespace TspCadPlugin
             }
  
 
-
-
-
             // Defining constraints
             // Constraints (every node is connected only to 2 edges)
             for (int i = 0; i < n; i++)
@@ -168,8 +165,7 @@ namespace TspCadPlugin
 
 
         /// <summary>
-        /// Function that generates all possible subsets for n elements using bitmasking,
-        /// excluding "0", "1", "10" and "111...1".
+        /// Function that generates all possible subsets for n elements using bitmasking, excluding "0", "1", "10" and "111...1".
         /// </summary>
         /// <param name="n">Number of elements</param>
         /// <returns>Returns a list of subsets, example (n=3): {011, 100, 101, 110}</returns>
@@ -186,8 +182,7 @@ namespace TspCadPlugin
 
 
         /// <summary>
-        /// Given a subset in bitmask form returns all possible combinations of 2 elements.
-        /// Example: "1011" will return { {0,1}, {0,3}, {1,3} }.
+        /// Given a subset in bitmask form returns all possible combinations of 2 elements. Example: "1011" will return { {0,1}, {0,3}, {1,3} }.
         /// </summary>
         /// <param name="subset">Subset in bitmask form, example: "1011".</param>
         /// <returns>List of arrays with all possible combinations of 2 elements in subset.</returns>
